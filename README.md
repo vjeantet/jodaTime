@@ -4,7 +4,7 @@
 [![Go Report Card](http://goreportcard.com/badge/vjeantet/jodaTime)](http:/goreportcard.com/report/vjeantet/jodaTime)
 
 # JodaTime
-Format golang time.Time with joda layout
+Format golang date time.Time with joda layout
 
 reference : [http://joda-time.sourceforge.net/apidocs/org/joda/time/format/DateTimeFormat.html](http://joda-time.sourceforge.net/apidocs/org/joda/time/format/DateTimeFormat.html)
 
