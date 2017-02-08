@@ -23,11 +23,9 @@ Usage
 */
 
 import (
+	"fmt"
 	"strconv"
 	"time"
-	"unicode/utf8"
-
-	"github.com/k0kubun/pp"
 )
 
 /*
@@ -66,132 +64,334 @@ import (
 
 // Format formats a date based on Microsoft Excel (TM) conventions
 func Format(format string, date time.Time) string {
-	lenString := utf8.RuneCountInString(format)
 	formatRune := []rune(format)
+	lenFormat := len(formatRune)
 	out := ""
-	for i := 0; i < lenString; i++ {
-		pp.Println("i,v-->", i, string(formatRune[i]))
+	for i := 0; i < len(formatRune); i++ {
+		// pp.Println("i,v-->", i, string(formatRune[i]))
 		switch r := formatRune[i]; r {
-		case 'Y': // Y YYYY YY
-			out += strconv.Itoa(date.Year())
+		case 'Y', 'y', 'x': // Y YYYY YY year
 			// while next is Y, combine
 			// switch combined and replace
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
 
-		case 'y': // y yyyy yy
-			out += strconv.Itoa(date.Year())
+			}
+			i = i + j - 1
 
-		case 'D': // D DD
-			out += strconv.Itoa(date.YearDay())
+			switch j {
+			case 1, 3, 4: // Y
+				out += strconv.Itoa(date.Year())
+			case 2: // YY
+				out += strconv.Itoa(date.Year())[2:4]
+			}
 
-		case 'w': // w ww
+		case 'D': // D DD day of year
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
+
+			}
+			i = i + j - 1
+
+			switch j {
+			case 1: // D
+				out = fmt.Sprintf("%s%d", out, date.YearDay())
+			case 2: // DD
+				out = fmt.Sprintf("%s%02d", out, date.YearDay())
+			}
+
+		case 'w': // w ww week of weekyear
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
+
+			}
+			i = i + j - 1
 			_, w := date.ISOWeek()
-			out += strconv.Itoa(w)
+			switch j {
+			case 1: // D
+				out = fmt.Sprintf("%s%d", out, w)
+			case 2: // DD
+				out = fmt.Sprintf("%s%02d", out, w)
+			}
 
-		case 'M': // M MM MMM MMMM
-			out += date.Month().String()
+		case 'M': // M MM MMM MMMM month of year
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
 
-		case 'd': // d dd
-			out += strconv.Itoa(date.Day())
+			}
+			i = i + j - 1
+			v := date.Month()
+			switch j {
+			case 1: // M
+				out = fmt.Sprintf("%s%d", out, v)
+			case 2: // MM
+				out = fmt.Sprintf("%s%02d", out, v)
+			case 3: // MMM
+				out = fmt.Sprintf("%s%s", out, v.String()[0:3])
+			case 4: // MMMM
+				out = fmt.Sprintf("%s%s", out, v.String())
+			}
 
-		case 'e': // e ee
-			out += strconv.Itoa(int(date.Weekday()))
+		case 'd': // d dd day of month
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
+
+			}
+			i = i + j - 1
+			v := date.Day()
+			switch j {
+			case 1: // D
+				out = fmt.Sprintf("%s%d", out, v)
+			case 2: // DD
+				out = fmt.Sprintf("%s%02d", out, v)
+			}
+
+		case 'e': // e ee day of week(number)
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
+
+			}
+			i = i + j - 1
+			v := date.Weekday()
+			switch j {
+			case 1: // e
+				out = fmt.Sprintf("%s%d", out, v)
+			case 2: // ee
+				out = fmt.Sprintf("%s%02d", out, v)
+			}
 
 		case 'E': // E EE
-			out += date.Weekday().String()
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
 
-		case 'h': // h hh
-			out += strconv.Itoa(date.Hour())
+			}
+			i = i + j - 1
+			v := date.Weekday()
+			switch j {
+			case 1: // E
+				out = fmt.Sprintf("%s%s", out, v.String()[0:3])
+			case 2: // EE
+				out = fmt.Sprintf("%s%s", out, v.String())
+			}
+		case 'h': // h hh clockhour of halfday (1~12)
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
+
+			}
+			i = i + j - 1
+			v := date.Hour()
+			if v > 12 {
+				v = v - 11
+			}
+			switch j {
+			case 1: // e
+				out = fmt.Sprintf("%s%d", out, v)
+			case 2: // ee
+				out = fmt.Sprintf("%s%02d", out, v)
+			}
 
 		case 'H': // H HH
-			out += strconv.Itoa(date.Hour())
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
+
+			}
+			i = i + j - 1
+			v := date.Hour()
+			switch j {
+			case 1: // e
+				out = fmt.Sprintf("%s%d", out, v)
+			case 2: // ee
+				out = fmt.Sprintf("%s%02d", out, v)
+			}
 
 		case 'a': // a
 			if date.Hour() > 12 {
-				out += "AM"
+				out = fmt.Sprintf("%s%s", out, "PM")
 			} else {
-				out += "PM"
+				out = fmt.Sprintf("%s%s", out, "AM")
 			}
 
-		case 'm': // m mm
-			out += strconv.Itoa(date.Minute())
+		case 'm': // m mm minute of hour
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
 
+			}
+			i = i + j - 1
+			v := date.Minute()
+			switch j {
+			case 1: // e
+				out = fmt.Sprintf("%s%d", out, v)
+			case 2: // ee
+				out = fmt.Sprintf("%s%02d", out, v)
+			}
 		case 's': // s ss
-			out += strconv.Itoa(date.Second())
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
+
+			}
+			i = i + j - 1
+			v := date.Second()
+			switch j {
+			case 1: // s
+				out = fmt.Sprintf("%s%d", out, v)
+			case 2: // ss
+				out = fmt.Sprintf("%s%02d", out, v)
+			}
 
 		case 'S': // S SS SSS
-			out += strconv.Itoa(date.Nanosecond())
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
+
+			}
+			i = i + j - 1
+			v := date.Nanosecond()
+			switch j {
+			case 1: // S
+				out = fmt.Sprintf("%s%d", out, v)
+			case 2: // SS
+				out = fmt.Sprintf("%s%02d", out, v)
+			case 3: // SSS
+				out = fmt.Sprintf("%s%03d", out, v)
+			}
 
 		case 'z': // z
 			z, _ := date.Zone()
-			out += z
+			out = fmt.Sprintf("%s%s", out, z)
 
 		case 'Z': // Z ZZ
-			_, z := date.Zone()
-			out += strconv.Itoa(z)
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
+
+			}
+			i = i + j - 1
+			zs, z := date.Zone()
+			sign := "+"
+			if z < 0 {
+				sign = "-"
+			}
+			switch j {
+			case 1: // Y
+				out = fmt.Sprintf("%s%s%02d00", out, sign, z/3600)
+			case 2: // YY
+				out = fmt.Sprintf("%s%s%02d:00", out, sign, z/3600)
+			case 3: // YYY
+				out = fmt.Sprintf("%s%s", out, timeZone[zs])
+			}
 
 		case '\'': // ' (text delimiter)  or '' (real quote)
 
-		case 'G':
-		case 'C':
-		case 'x': // x xxxx xx
-		case 'K': // K KK
-		case 'k': // k kk
+		case 'G': //era                          text
+			out = fmt.Sprintf("%sAD", out)
+
+		case 'C': //century of era (>=0)         number
+			out += strconv.Itoa(date.Year())[0:2]
+
+		case 'K': // K KK hour of halfday (0~11)
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
+
+			}
+			i = i + j - 1
+			v := date.Hour()
+			if v > 12 {
+				v = v - 12
+			}
+			switch j {
+			case 1: // e
+				out = fmt.Sprintf("%s%d", out, v)
+			case 2: // ee
+				out = fmt.Sprintf("%s%02d", out, v)
+			}
+
+		case 'k': // k kk clockhour of day (1~24)
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					break
+				}
+
+			}
+			i = i + j - 1
+			v := date.Hour() + 1
+			switch j {
+			case 1: // e
+				out = fmt.Sprintf("%s%d", out, v)
+			case 2: // ee
+				out = fmt.Sprintf("%s%02d", out, v)
+			}
 		default:
-			out += string(r)
+			out = fmt.Sprintf("%s%s", out, string(r))
 		}
 	}
 	return out
 
 }
 
-var longDayNames = []string{
-	"Sunday",
-	"Monday",
-	"Tuesday",
-	"Wednesday",
-	"Thursday",
-	"Friday",
-	"Saturday",
-}
-
-var shortDayNames = []string{
-	"Sun",
-	"Mon",
-	"Tue",
-	"Wed",
-	"Thu",
-	"Fri",
-	"Sat",
-}
-
-var shortMonthNames = []string{
-	"---",
-	"Jan",
-	"Feb",
-	"Mar",
-	"Apr",
-	"May",
-	"Jun",
-	"Jul",
-	"Aug",
-	"Sep",
-	"Oct",
-	"Nov",
-	"Dec",
-}
-
-var longMonthNames = []string{
-	"---",
-	"January",
-	"February",
-	"March",
-	"April",
-	"May",
-	"June",
-	"July",
-	"August",
-	"September",
-	"October",
-	"November",
-	"December",
+var timeZone = map[string]string{
+	"GMT":     "Europe/London",
+	"BST":     "Europe/London",
+	"BSDT":    "Europe/London",
+	"CET":     "Europe/Paris",
+	"UTC":     "",
+	"PST":     "America/Los_Angeles",
+	"PDT":     "America/Los_Angeles",
+	"LA":      "America/Los_Angeles",
+	"LAX":     "America/Los_Angeles",
+	"MST":     "America/Denver",
+	"MDT":     "America/Denver",
+	"CST":     "America/Chicago",
+	"CDT":     "America/Chicago",
+	"Chicago": "America/Chicago",
+	"EST":     "America/New_York",
+	"EDT":     "America/New_York",
+	"NYC":     "America/New_York",
+	"NY":      "America/New_York",
+	"AEST":    "Australia/Sydney",
+	"AEDT":    "Australia/Sydney",
+	"AWST":    "Australia/Perth",
+	"AWDT":    "Australia/Perth",
+	"ACST":    "Australia/Adelaide",
+	"ACDT":    "Australia/Adelaide",
 }

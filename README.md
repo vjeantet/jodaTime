@@ -10,14 +10,17 @@ reference : [http://joda-time.sourceforge.net/apidocs/org/joda/time/format/DateT
 
 # Usage
 ```go
-	package main
-	import (
-		"vjeantet/jodaTime"
-		"fmt"
-	)
+package main
 
-	func main() {
-		date := jodaTime.Format("YYYY.MM.dd", time.Now())
-		fmt.Println(date)
-	}
+import (
+	"fmt"
+	"time"
+
+	"github.com/vjeantet/jodaTime"
+)
+
+func main() {
+	date := jodaTime.Format("YYYY.MM.dd", time.Now())
+	fmt.Println(date)
+}
 ```
