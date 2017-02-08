@@ -1,6 +1,7 @@
 language: go
 install:
     - go get -v golang.org/x/tools/cmd/cover
+    - go get -v github.com/stretchr/testify/assert
 script:
     - go test -v -tags=testcgo -covermode=count -coverprofile=profile.cov
 after_success:
