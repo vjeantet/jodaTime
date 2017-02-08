@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var date, _ = time.Parse("2006-01-02 15:04:05 MST", "2007-02-03 16:05:06 CET")
+var date, _ = time.Parse("2006-01-02 15:04:05 MST", "2007-02-03 16:05:06 UTC")
 
 func TestFormat(t *testing.T) {
 
@@ -60,11 +60,11 @@ func TestFormat(t *testing.T) {
 		{"SS", "00"},
 		{"SSS", "000"},
 
-		{"z", "CET"},
+		{"z", "UTC"},
 
-		{"Z", "+0100"},
-		{"ZZ", "+01:00"},
-		{"ZZZ", "Europe/Paris"},
+		{"Z", "+0000"},
+		{"ZZ", "+00:00"},
+		{"ZZZ", ""},
 
 		{"G", "AD"},
 
@@ -99,10 +99,10 @@ func TestFormat(t *testing.T) {
 		{"HH:mm:ss.SS", "16:05:06.00"},
 		{"HH:mm:ss.S", "16:05:06.0"},
 
-		{"dd/MM/YYYY HH:mm:ss z", "03/02/2007 16:05:06 CET"},
+		{"dd/MM/YYYY HH:mm:ss z", "03/02/2007 16:05:06 UTC"},
 
-		{"dd/MM/YYYY HH:mm:ss z ZZ", "03/02/2007 16:05:06 CET +01:00"},
-		{"dd/MM/YYYY HH:mm:ss a 世 z Z", "03/02/2007 16:05:06 PM 世 CET +0100"},
+		{"dd/MM/YYYY HH:mm:ss z ZZ", "03/02/2007 16:05:06 UTC +00:00"},
+		{"dd/MM/YYYY HH:mm:ss a 世 z Z", "03/02/2007 16:05:06 PM 世 UTC +0000"},
 	}
 
 	for _, test := range tests {
