@@ -1,0 +1,86 @@
+package jodaTime
+
+import (
+	"testing"
+	"time"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestParse(t *testing.T) {
+	tests := []struct {
+		format   string
+		value    string
+		expected time.Time
+	}{
+		{"dd/MM/YYYY HH:mm:ss.SSSSSSSSS", "03/02/2007 23:10:05.000000004",
+			time.Date(2007, time.February, 3, 23, 10, 5, 4, time.UTC)},
+
+		{"dd/MMMM/yyyy:HH:mm:ss Z", "30/August/2015:21:44:25 -0500",
+			time.Date(2015, time.August, 30, 21, 44, 25, 0, time.FixedZone("", -5*60*60))},
+
+		{"dd/MMMM/yyyy:hh:m:s a Z", "30/August/2015:03:4:5 PM -0500",
+			time.Date(2015, time.August, 30, 15, 4, 5, 0, time.FixedZone("", -5*60*60))},
+
+		{"dd/MMMM/yyyy:hh:m:s a Z", "30/August/2015:03:4:25 PM -0500",
+			time.Date(2015, time.August, 30, 15, 4, 25, 0, time.FixedZone("", -5*60*60))},
+
+		{"YYYY-MM-dd HH:mm:ss.SSS", "2012-12-22 12:53:30.000",
+			time.Date(2012, time.December, 22, 12, 53, 30, 0, time.UTC)},
+		{"E d-MMMM-YY HH:mm:ss.SSS", "Mon 1-may-17 12:53:30.000",
+			time.Date(2017, time.May, 1, 12, 53, 30, 0, time.UTC)},
+		{"[EEE MMM dd HH:mm:ss y]", "[Sun Jan 11 10:43:35 2015]",
+			time.Date(2015, time.January, 11, 10, 43, 35, 0, time.UTC)},
+		{"[EEEE MMM dd HH:mm:ss y]", "[Sunday Jan 11 10:43:35 2015]",
+			time.Date(2015, time.January, 11, 10, 43, 35, 0, time.UTC)},
+		{"[EEEE M dd h:mm:ss y]", "[Sunday 1 11 9:43:35 2015]",
+			time.Date(2015, time.January, 11, 9, 43, 35, 0, time.UTC)},
+
+		{"dd/MMMM/yyyy:hh:m:s a ZZ", "30/August/2015:03:4:25 PM -05:00",
+			time.Date(2015, time.August, 30, 15, 4, 25, 0, time.FixedZone("", -5*60*60))},
+	}
+
+	for _, test := range tests {
+		rTime, err := Parse(test.format, test.value)
+		// z, o := rTime.Zone()
+		// pp.Println("rTime, zone, offset-->", rTime, z, o/3600)
+
+		assert.NoError(t, err)
+		assert.Equal(t, test.expected, rTime, "("+test.format+") they should be equal")
+	}
+}
+
+func TestParseInLocation(t *testing.T) {
+	tests := []struct {
+		format   string
+		value    string
+		location string
+		expected time.Time
+	}{
+		{"dd/MM/YYYY HH:mm:ss", "03/02/2007 23:10:05", "Europe/Paris",
+			time.Date(2007, time.February, 3, 23, 10, 5, 0, time.FixedZone("CET", 3600))},
+	}
+
+	for _, test := range tests {
+		rTime, err := ParseInLocation(test.format, test.value, test.location)
+		assert.NoError(t, err)
+		assert.Equal(t, test.expected.Format("RFC1123Z"), rTime.Format("RFC1123Z"), "("+test.format+") they should be equal")
+	}
+}
+
+func TestParseInLocationError(t *testing.T) {
+	tests := []struct {
+		format   string
+		value    string
+		location string
+		expected time.Time
+	}{
+		{"dd/MM/YYYY HH:mm:ss", "03/02/2007 23:10:05", "Space/Moon",
+			time.Date(2007, time.February, 3, 23, 10, 5, 0, time.FixedZone("CET", 3600))},
+	}
+
+	for _, test := range tests {
+		_, err := ParseInLocation(test.format, test.value, test.location)
+		assert.Error(t, err)
+	}
+}

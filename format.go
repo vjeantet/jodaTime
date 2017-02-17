@@ -189,9 +189,9 @@ func Format(format string, date time.Time) string {
 			i = i + j - 1
 			v := date.Weekday()
 			switch j {
-			case 1: // E
+			case 1, 2, 3: // E
 				out = fmt.Sprintf("%s%s", out, v.String()[0:3])
-			case 2: // EE
+			case 4: // EE
 				out = fmt.Sprintf("%s%s", out, v.String())
 			}
 		case 'h': // h hh clockhour of halfday (1~12)
@@ -307,13 +307,14 @@ func Format(format string, date time.Time) string {
 			sign := "+"
 			if z < 0 {
 				sign = "-"
+				z = -z
 			}
 			switch j {
-			case 1: // Y
+			case 1: // Z
 				out = fmt.Sprintf("%s%s%02d00", out, sign, z/3600)
-			case 2: // YY
+			case 2: // ZZ
 				out = fmt.Sprintf("%s%s%02d:00", out, sign, z/3600)
-			case 3: // YYY
+			case 3: // ZZZ
 				out = fmt.Sprintf("%s%s", out, timeZone[zs])
 			}
 

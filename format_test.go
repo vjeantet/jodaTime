@@ -9,6 +9,25 @@ import (
 
 var date, _ = time.Parse("2006-01-02 15:04:05 MST", "2007-02-03 16:05:06 UTC")
 
+func TestFormatMore(t *testing.T) {
+
+	tests := []struct {
+		format   string
+		expected string
+		date     time.Time
+	}{
+		{"a", "AM",
+			time.Date(2007, time.February, 3, 11, 10, 5, 4, time.UTC)},
+
+		{"dd/MM/YYYY HH:mm:ss ZZ", "03/02/2007 16:05:06 -01:00",
+			time.Date(2007, time.February, 3, 16, 05, 6, 0, time.FixedZone("", -1*3600))},
+	}
+
+	for _, test := range tests {
+		assert.Equal(t, test.expected, Format(test.format, test.date), "("+test.format+") they should be equal")
+	}
+
+}
 func TestFormat(t *testing.T) {
 
 	tests := []struct {
@@ -40,7 +59,9 @@ func TestFormat(t *testing.T) {
 		{"ee", "06"},
 
 		{"E", "Sat"},
-		{"EE", "Saturday"},
+		{"EE", "Sat"},
+		{"EEE", "Sat"},
+		{"EEEE", "Saturday"},
 
 		{"h", "5"},
 		{"hh", "05"},
@@ -76,6 +97,9 @@ func TestFormat(t *testing.T) {
 		{"k", "17"},
 		{"kk", "17"},
 
+		{"w", "5"},
+		{"ww", "05"},
+
 		{"YYYY.MM.dd", "2007.02.03"},
 		{"YYYY.MM.d", "2007.02.3"},
 		{"YYYY.M.d", "2007.2.3"},
@@ -85,7 +109,9 @@ func TestFormat(t *testing.T) {
 		{"dd MMMM YYYY", "03 February 2007"},
 
 		{"E dd MMMM YYYY", "Sat 03 February 2007"},
-		{"EE dd MMMM YYYY", "Saturday 03 February 2007"},
+		{"EE dd MMMM YYYY", "Sat 03 February 2007"},
+		{"EEE dd MMMM YYYY", "Sat 03 February 2007"},
+		{"EEEE dd MMMM YYYY", "Saturday 03 February 2007"},
 
 		{"HH:mm:ss", "16:05:06"},
 		{"HH:mm:s", "16:05:6"},
