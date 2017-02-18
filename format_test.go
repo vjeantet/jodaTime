@@ -9,8 +9,40 @@ import (
 
 var date, _ = time.Parse("2006-01-02 15:04:05 MST", "2007-02-03 16:05:06 UTC")
 
-func TestFormatMore(t *testing.T) {
+func TestFormatMoreQuotes(t *testing.T) {
+	tests := []struct {
+		format   string
+		expected string
+	}{
 
+		{"HHTmm", "16T05"},
+		{"HH''mm", "16'05"},
+		{"HH''mm", "16'05"},
+		{"HH'H'mm", "16H05"},
+		{"HH'H''mm", "16Hmm"},
+		{"HH'H'''mm", "16H'05"},
+		{"HH'''H'mm", "16'H05"},
+		{"HH'''H'''mm", "16'H'05"},
+
+		{"HH'H D'mm", "16H D05"},
+		{"HH'H D''mm", "16H Dmm"},
+		{"HH'H D'''mm", "16H D'05"},
+		{"HH'''H D'mm", "16'H D05"},
+		{"HH'''H D'''mm", "16'H D'05"},
+
+		{"'With Emoji' HH😀mm", "With Emoji 16😀05"},
+		{"'With Emoji' HH'😀'mm", "With Emoji 16😀05"},
+		{"'With Emoji' HH'😀🕐'mm", "With Emoji 16😀🕐05"},
+
+		{"HH 'hours and' mm 'minutes'", "16 hours and 05 minutes"},
+	}
+
+	for _, test := range tests {
+		assert.Equal(t, test.expected, Format(test.format, date), "("+test.format+") they should be equal")
+	}
+}
+
+func TestFormatMore(t *testing.T) {
 	tests := []struct {
 		format   string
 		expected string
@@ -18,8 +50,9 @@ func TestFormatMore(t *testing.T) {
 	}{
 		{"a", "AM",
 			time.Date(2007, time.February, 3, 11, 10, 5, 4, time.UTC)},
-
 		{"dd/MM/YYYY HH:mm:ss ZZ", "03/02/2007 16:05:06 -01:00",
+			time.Date(2007, time.February, 3, 16, 05, 6, 0, time.FixedZone("", -1*3600))},
+		{"yyyy-MM-dd'T'HH:mm:ss.SSSZ", "2007-02-03T16:05:06.000-0100",
 			time.Date(2007, time.February, 3, 16, 05, 6, 0, time.FixedZone("", -1*3600))},
 	}
 
@@ -44,7 +77,7 @@ func TestFormat(t *testing.T) {
 		{"yyy", "2007"},
 		{"yyyy", "2007"},
 
-		{"D", "34"},
+		{"D ", "34 "},
 		{"DD", "34"},
 
 		{"M", "2"},
@@ -57,6 +90,7 @@ func TestFormat(t *testing.T) {
 
 		{"e", "6"},
 		{"ee", "06"},
+		{"eeL", "06L"},
 
 		{"E", "Sat"},
 		{"EE", "Sat"},
@@ -79,11 +113,11 @@ func TestFormat(t *testing.T) {
 
 		{"S", "0"},
 		{"SS", "00"},
-		{"SSS", "000"},
+		{"SSSL", "000L"},
 
-		{"z", "UTC"},
+		{"zL", "UTCL"},
 
-		{"Z", "+0000"},
+		{"ZL", "+0000L"},
 		{"ZZ", "+00:00"},
 		{"ZZZ", ""},
 
@@ -92,13 +126,14 @@ func TestFormat(t *testing.T) {
 		{"C", "20"},
 
 		{"K", "4"},
-		{"KK", "04"},
+		{"KKL", "04L"},
 
-		{"k", "17"},
-		{"kk", "17"},
+		{"kL", "17L"},
+		{"kk k", "17 17"},
 
 		{"w", "5"},
 		{"ww", "05"},
+		{"wwT", "05T"},
 
 		{"YYYY.MM.dd", "2007.02.03"},
 		{"YYYY.MM.d", "2007.02.3"},
