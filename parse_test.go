@@ -13,13 +13,13 @@ func TestParse(t *testing.T) {
 		value    string
 		expected time.Time
 	}{
-		{"dd/MM/YYYY HH:mm:ss.SSSSSSSSS", "03/02/2007 23:10:05.000000004",
+		{"dd/MM/YYYY HH:mm:ss.SSSSSSSSS P", "03/02/2007 23:10:05.000000004 P",
 			time.Date(2007, time.February, 3, 23, 10, 5, 4, time.UTC)},
 
 		{"dd/MMMM/yyyy:HH:mm:ss Z", "30/August/2015:21:44:25 -0500",
 			time.Date(2015, time.August, 30, 21, 44, 25, 0, time.FixedZone("", -5*60*60))},
 
-		{"dd/MMMM/yyyy:hh:m:s a Z", "30/August/2015:03:4:5 PM -0500",
+		{"dd/MMMM/yyyy:hh:m:s a Z P", "30/August/2015:03:4:5 PM -0500 P",
 			time.Date(2015, time.August, 30, 15, 4, 5, 0, time.FixedZone("", -5*60*60))},
 
 		{"dd/MMMM/yyyy:hh:m:s a Z", "30/August/2015:03:4:25 PM -0500",
