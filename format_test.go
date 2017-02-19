@@ -171,3 +171,10 @@ func TestFormat(t *testing.T) {
 	}
 
 }
+
+func BenchmarkFormat(b *testing.B) {
+	// run the Parse function b.N times
+	for n := 0; n < b.N; n++ {
+		Format("dd/MM/YYYY HH:mm:ss z", date)
+	}
+}

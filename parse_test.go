@@ -100,3 +100,10 @@ func TestParseInLocationError(t *testing.T) {
 		assert.Error(t, err)
 	}
 }
+
+func BenchmarkParse(b *testing.B) {
+	// run the Parse function b.N times
+	for n := 0; n < b.N; n++ {
+		Parse("YYYY-MM-dd'T'HH:mm:ss", "2017-02-18T16:33:21")
+	}
+}
