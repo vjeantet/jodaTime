@@ -38,6 +38,18 @@ func TestParse(t *testing.T) {
 
 		{"dd/MMMM/yyyy:hh:m:s a ZZ", "30/August/2015:03:4:25 PM -05:00",
 			time.Date(2015, time.August, 30, 15, 4, 25, 0, time.FixedZone("", -5*60*60))},
+
+		{"YYYY-MM-dd''HH:mm:ss", "2017-02-18'16:33:21",
+			time.Date(2017, time.February, 18, 16, 33, 21, 0, time.UTC)},
+
+		{"YYYY-MM-dd'T'HH:mm:ss", "2017-02-18T16:33:21",
+			time.Date(2017, time.February, 18, 16, 33, 21, 0, time.UTC)},
+
+		{"YYYY-MM-dd'T'HH:mm:ss'Z'", "2017-02-18T16:33:21Z",
+			time.Date(2017, time.February, 18, 16, 33, 21, 0, time.UTC)},
+
+		// {"YYYY-MM-dd HH:mm:ss.SSS", "2012-12-22 12:53:30.123",
+		// 	time.Date(2012, time.December, 22, 12, 53, 30, 123, time.UTC)},
 	}
 
 	for _, test := range tests {

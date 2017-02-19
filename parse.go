@@ -185,6 +185,27 @@ func getLayout(format string) string {
 			}
 
 			i = i + j - 1
+		case '\'': // ' (text delimiter)  or '' (real quote)
+
+			// real quote
+			if formatRune[i+1] == r {
+				layout = fmt.Sprintf("%s'", layout)
+				i = i + 1
+				continue
+			}
+
+			tmp := []rune{}
+			j := 1
+			for ; i+j < lenFormat; j++ {
+				if formatRune[i+j] != r {
+					tmp = append(tmp, formatRune[i+j])
+					continue
+				}
+				break
+			}
+			i = i + j
+
+			layout = fmt.Sprintf("%s%s", layout, string(tmp))
 		default:
 			layout = fmt.Sprintf("%s%s", layout, string(r))
 		}
