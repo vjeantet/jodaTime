@@ -178,13 +178,8 @@ func Format(format string, date time.Time) string {
 			case 1: // e
 				out += strconv.Itoa(int(v))
 			case 2: // ee
-				if v < 10 {
-					out += "0"
-					out += strconv.Itoa(int(v))
-				} else {
-					out += strconv.Itoa(int(v))
-				}
-
+				out += "0"
+				out += strconv.Itoa(int(v))
 			}
 
 		case 'E': // E EE

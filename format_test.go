@@ -54,6 +54,29 @@ func TestFormatMore(t *testing.T) {
 			time.Date(2007, time.February, 3, 16, 05, 6, 0, time.FixedZone("", -1*3600))},
 		{"yyyy-MM-dd'T'HH:mm:ss.SSSZ", "2007-02-03T16:05:06.000-0100",
 			time.Date(2007, time.February, 3, 16, 05, 6, 0, time.FixedZone("", -1*3600))},
+		// ZeroFixes
+		{"DD", "05", time.Date(2007, time.January, 5, 16, 05, 6, 0, time.FixedZone("", -1*3600))},
+		{"ww", "14", time.Date(2007, time.April, 5, 16, 05, 6, 0, time.FixedZone("", -1*3600))},
+		{"dd", "15", time.Date(2007, time.April, 15, 16, 05, 6, 0, time.FixedZone("", -1*3600))},
+		{"MM", "11", time.Date(2007, time.November, 15, 16, 05, 6, 0, time.FixedZone("", -1*3600))},
+		{"ee", "04", time.Date(2007, time.November, 15, 16, 05, 6, 0, time.FixedZone("", -1*3600))},
+		{"hh", "11", time.Date(2007, time.November, 15, 11, 05, 6, 0, time.FixedZone("", -1*3600))},
+		{"hh", "09", time.Date(2007, time.November, 15, 20, 05, 6, 0, time.FixedZone("", -1*3600))},
+		{"HH", "04", time.Date(2007, time.November, 15, 04, 05, 6, 0, time.FixedZone("", -1*3600))},
+		{"mm", "05", time.Date(2007, time.November, 15, 04, 05, 6, 0, time.FixedZone("", -1*3600))},
+		{"mm", "55", time.Date(2007, time.November, 15, 04, 55, 6, 0, time.FixedZone("", -1*3600))},
+		{"ss", "46", time.Date(2007, time.November, 15, 04, 55, 46, 0, time.FixedZone("", -1*3600))},
+
+		{"SS", "00", time.Date(2007, time.November, 15, 04, 55, 46, 9, time.FixedZone("", -1*3600))},
+		{"SSS", "000", time.Date(2007, time.November, 15, 04, 55, 46, 9, time.FixedZone("", -1*3600))},
+		{"SSS", "100", time.Date(2007, time.November, 15, 04, 55, 46, 100000000, time.FixedZone("", -1*3600))},
+		{"SSS", "010", time.Date(2007, time.November, 15, 04, 55, 46, 10000000, time.FixedZone("", -1*3600))},
+		{"SSS", "001", time.Date(2007, time.November, 15, 04, 55, 46, 1000000, time.FixedZone("", -1*3600))},
+
+		{"Z", "-1100", time.Date(2007, time.November, 15, 04, 55, 46, 1000000, time.FixedZone("", -11*3600))},
+		{"ZZ", "-11:00", time.Date(2007, time.November, 15, 04, 55, 46, 1000000, time.FixedZone("", -11*3600))},
+		{"KK", "11", time.Date(2007, time.November, 15, 23, 55, 46, 1000000, time.FixedZone("", -11*3600))},
+		{"kk", "09", time.Date(2007, time.November, 15, 8, 55, 46, 1000000, time.FixedZone("", -11*3600))},
 	}
 
 	for _, test := range tests {
