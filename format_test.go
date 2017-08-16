@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var date, _ = time.Parse("2006-01-02 15:04:05 MST", "2007-02-03 16:05:06 UTC")
+var date, _ = time.Parse("2006-01-02 15:04:05.9999999 MST", "2007-02-03 16:05:06.1234567 UTC")
 
 func TestFormatMoreQuotes(t *testing.T) {
 	tests := []struct {
@@ -111,9 +111,9 @@ func TestFormat(t *testing.T) {
 		{"s", "6"},
 		{"ss", "06"},
 
-		{"S", "0"},
-		{"SS", "00"},
-		{"SSSL", "000L"},
+		{"S", "1"},
+		{"SS", "12"},
+		{"SSSL", "123L"},
 
 		{"zL", "UTCL"},
 
@@ -156,9 +156,9 @@ func TestFormat(t *testing.T) {
 		{"hh:m:s", "05:5:6"},
 		{"h:m:s", "5:5:6"},
 
-		{"HH:mm:ss.SSS", "16:05:06.000"},
-		{"HH:mm:ss.SS", "16:05:06.00"},
-		{"HH:mm:ss.S", "16:05:06.0"},
+		{"HH:mm:ss.SSS", "16:05:06.123"},
+		{"HH:mm:ss.SS", "16:05:06.12"},
+		{"HH:mm:ss.S", "16:05:06.1"},
 
 		{"dd/MM/YYYY HH:mm:ss z", "03/02/2007 16:05:06 UTC"},
 

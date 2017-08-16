@@ -312,11 +312,12 @@ func Format(format string, date time.Time) string {
 
 			}
 			i = i + j - 1
-			v := date.Nanosecond()
+			v := date.Nanosecond() / 1000000
 			switch j {
 			case 1: // S
-				out += strconv.Itoa(v)
+				out += strconv.Itoa(v / 100)
 			case 2: // SS
+				v = v / 10
 				if v < 10 {
 					out += "0"
 					out += strconv.Itoa(v)
