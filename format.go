@@ -209,7 +209,7 @@ func Format(format string, date time.Time) string {
 			i = i + j - 1
 			v := date.Hour()
 			if v > 12 {
-				v = v - 11
+				v = v - 12
 			}
 			switch j {
 			case 1: // h
