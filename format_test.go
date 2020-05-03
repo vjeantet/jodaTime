@@ -1,6 +1,7 @@
 package jodaTime
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -61,7 +62,7 @@ func TestFormatMore(t *testing.T) {
 		{"MM", "11", time.Date(2007, time.November, 15, 16, 05, 6, 0, time.FixedZone("", -1*3600))},
 		{"ee", "04", time.Date(2007, time.November, 15, 16, 05, 6, 0, time.FixedZone("", -1*3600))},
 		{"hh", "11", time.Date(2007, time.November, 15, 11, 05, 6, 0, time.FixedZone("", -1*3600))},
-		{"hh", "09", time.Date(2007, time.November, 15, 20, 05, 6, 0, time.FixedZone("", -1*3600))},
+		{"hh", "08", time.Date(2007, time.November, 15, 20, 05, 6, 0, time.FixedZone("", -1*3600))},
 		{"HH", "04", time.Date(2007, time.November, 15, 04, 05, 6, 0, time.FixedZone("", -1*3600))},
 		{"mm", "05", time.Date(2007, time.November, 15, 04, 05, 6, 0, time.FixedZone("", -1*3600))},
 		{"mm", "55", time.Date(2007, time.November, 15, 04, 55, 6, 0, time.FixedZone("", -1*3600))},
@@ -76,7 +77,7 @@ func TestFormatMore(t *testing.T) {
 		{"Z", "-1100", time.Date(2007, time.November, 15, 04, 55, 46, 1000000, time.FixedZone("", -11*3600))},
 		{"ZZ", "-11:00", time.Date(2007, time.November, 15, 04, 55, 46, 1000000, time.FixedZone("", -11*3600))},
 		{"KK", "11", time.Date(2007, time.November, 15, 23, 55, 46, 1000000, time.FixedZone("", -11*3600))},
-		{"kk", "09", time.Date(2007, time.November, 15, 8, 55, 46, 1000000, time.FixedZone("", -11*3600))},
+		{"kk", "08", time.Date(2007, time.November, 15, 8, 55, 46, 1000000, time.FixedZone("", -11*3600))},
 	}
 
 	for _, test := range tests {
@@ -120,8 +121,8 @@ func TestFormat(t *testing.T) {
 		{"EEE", "Sat"},
 		{"EEEE", "Saturday"},
 
-		{"h", "5"},
-		{"hh", "05"},
+		{"h", "4"},
+		{"hh", "04"},
 
 		{"H", "16"},
 		{"HH", "16"},
@@ -144,15 +145,11 @@ func TestFormat(t *testing.T) {
 		{"ZZ", "+00:00"},
 		{"ZZZ", ""},
 
-		{"G", "AD"},
-
-		{"C", "20"},
-
 		{"K", "4"},
 		{"KKL", "04L"},
 
-		{"kL", "17L"},
-		{"kk k", "17 17"},
+		{"kL", "16L"},
+		{"kk k", "16 16"},
 
 		{"w", "5"},
 		{"ww", "05"},
@@ -176,8 +173,8 @@ func TestFormat(t *testing.T) {
 		{"HH:m:s", "16:5:6"},
 		{"H:m:s", "16:5:6"},
 
-		{"hh:m:s", "05:5:6"},
-		{"h:m:s", "5:5:6"},
+		{"hh:m:s", "04:5:6"},
+		{"h:m:s", "4:5:6"},
 
 		{"HH:mm:ss.SSS", "16:05:06.123"},
 		{"HH:mm:ss.SS", "16:05:06.12"},
@@ -193,6 +190,134 @@ func TestFormat(t *testing.T) {
 		assert.Equal(t, test.expected, Format(test.format, date), "("+test.format+") they should be equal")
 	}
 
+}
+
+func TestFormatEra(t *testing.T) {
+	check(t, "G", "AD", "1945-01-02T15:04:05+07:00")
+	check(t, "G", "AD", "2007-01-31T15:04:05Z")
+}
+
+func TestFormatCenturyOfEra(t *testing.T) {
+	check(t, "C", "20", "2006-01-02T15:04:05+07:00")
+	check(t, "C", "20", "2007-01-31T15:04:05Z")
+	check(t, "C", "20", "2006-01-02T15:04:05+07:00")
+	check(t, "C", "19", "1999-01-02T15:04:05+07:00")
+	check(t, "C", "17", "1789-01-02T15:04:05+07:00")
+}
+
+func TestFormatYearOfEra(t *testing.T) {
+	check(t, "Y", "2004", "2004-01-02T15:04:05+07:00")
+	check(t, "Y", "1945", "1945-01-31T15:04:05Z")
+
+	check(t, "YY", "04", "2004-01-02T15:04:05+07:00")
+	check(t, "YY", "45", "1945-01-31T15:04:05Z")
+
+	check(t, "YYY", "1945", "1945-01-31T15:04:05Z")
+	check(t, "YYYY", "1945", "1945-01-31T15:04:05Z")
+}
+
+func TestFormatYear(t *testing.T) {
+	check(t, "y", "2004", "2004-01-02T15:04:05+07:00")
+	check(t, "y", "1945", "1945-01-31T15:04:05Z")
+
+	check(t, "yy", "04", "2004-01-02T15:04:05+07:00")
+	check(t, "yy", "45", "1945-01-31T15:04:05Z")
+
+	check(t, "yyy", "1945", "1945-01-31T15:04:05Z")
+	check(t, "yyyy", "1945", "1945-01-31T15:04:05Z")
+}
+
+func TestFormatWeekYear(t *testing.T) {
+	check(t, "x", "2004", "2004-01-02T15:04:05+07:00")
+	check(t, "x", "1945", "1945-01-31T15:04:05Z")
+
+	check(t, "xx", "04", "2004-01-02T15:04:05+07:00")
+	check(t, "xx", "45", "1945-01-31T15:04:05Z")
+
+	check(t, "xxx", "1945", "1945-01-31T15:04:05Z")
+	check(t, "xxxx", "1945", "1945-01-31T15:04:05Z")
+}
+
+func TestFormatWeekOfWeekyear(t *testing.T) {
+	check(t, "w", "24", "2004-06-10T15:04:05+07:00")
+	check(t, "w", "5", "1945-01-31T15:04:05Z")
+
+	check(t, "ww", "24", "2004-06-10T15:04:05+07:00")
+	check(t, "ww", "01", "2004-01-02T15:04:05+07:00")
+	check(t, "ww", "05", "1945-01-31T15:04:05Z")
+
+	check(t, "www", "", "1945-01-31T15:04:05Z")
+	check(t, "wwww", "", "1945-01-31T15:04:05Z")
+}
+
+func TestFormatHourOfHalfday(t *testing.T) { //0~11
+	check(t, "K", "0", "2004-06-09T00:20:05+05:00")
+	check(t, "K", "10", "2004-06-09T10:20:05+07:00")
+	check(t, "K", "0", "2004-06-09T12:20:05+05:00")
+	check(t, "K", "10", "2004-06-09T22:20:05+00:00")
+
+	check(t, "KK", "00", "2004-06-09T00:20:05+05:00")
+	check(t, "KK", "10", "2004-06-09T10:20:05+07:00")
+	check(t, "KK", "00", "2004-06-09T12:20:05+05:00")
+	check(t, "KK", "10", "2004-06-09T22:20:05+00:00")
+}
+
+func TestFormatClockhourOfHalfday(t *testing.T) { // clockhour of halfday (1~12)
+	check(t, "h", "12", "2004-06-09T00:20:05+05:00")
+	check(t, "h", "10", "2004-06-09T10:20:05+07:00")
+	check(t, "h", "4", "2004-06-09T4:20:05+07:00")
+	check(t, "h", "12", "2004-06-09T12:20:05+05:00")
+	check(t, "h", "10", "2004-06-09T22:20:05+00:00")
+	check(t, "h", "11", "2004-06-09T23:20:05+00:00")
+
+	check(t, "hh", "12", "2004-06-09T00:20:05+05:00")
+	check(t, "hh", "04", "2004-06-09T04:20:05+07:00")
+	check(t, "hh", "12", "2004-06-09T12:20:05+05:00")
+	check(t, "hh", "10", "2004-06-09T22:20:05+00:00")
+	check(t, "hh", "11", "2004-06-09T23:20:05+00:00")
+}
+
+func TestFormatHourOfDay(t *testing.T) { // clockhour of halfday (1~12)
+	check(t, "H", "0", "2004-06-09T00:20:05+05:00")
+	check(t, "H", "4", "2004-06-09T04:20:05+07:00")
+	check(t, "H", "10", "2004-06-09T10:20:05+07:00")
+	check(t, "H", "12", "2004-06-09T12:20:05+05:00")
+	check(t, "H", "22", "2004-06-09T22:20:05+00:00")
+	check(t, "H", "23", "2004-06-09T23:20:05+00:00")
+
+	check(t, "HH", "00", "2004-06-09T00:20:05+05:00")
+	check(t, "HH", "04", "2004-06-09T04:20:05+07:00")
+	check(t, "HH", "10", "2004-06-09T10:20:05+07:00")
+	check(t, "HH", "12", "2004-06-09T12:20:05+05:00")
+	check(t, "HH", "22", "2004-06-09T22:20:05+00:00")
+	check(t, "HH", "23", "2004-06-09T23:20:05+00:00")
+}
+
+func TestFormatClockhourOfDay(t *testing.T) { // clockhour of halfday (1~12)
+	check(t, "k", "24", "2004-06-09T00:20:05+05:00")
+	check(t, "k", "1", "2004-06-09T1:20:05+07:00")
+	check(t, "k", "4", "2004-06-09T4:20:05+07:00")
+	check(t, "k", "10", "2004-06-09T10:20:05+07:00")
+	check(t, "k", "12", "2004-06-09T12:20:05+05:00")
+	check(t, "k", "22", "2004-06-09T22:20:05+00:00")
+	check(t, "k", "23", "2004-06-09T23:20:05+00:00")
+
+	check(t, "kk", "24", "2004-06-09T00:20:05+05:00")
+	check(t, "kk", "01", "2004-06-09T01:20:05+07:00")
+	check(t, "kk", "04", "2004-06-09T04:20:05+07:00")
+	check(t, "kk", "12", "2004-06-09T12:20:05+05:00")
+	check(t, "kk", "22", "2004-06-09T22:20:05+00:00")
+	check(t, "kk", "23", "2004-06-09T23:20:05+00:00")
+}
+
+// RFC3339     = "2006-01-02T15:04:05Z07:00"
+func check(t *testing.T, format, expected, date string) {
+	if mt, err := time.Parse(time.RFC3339, date); err == nil {
+		assert.Equal(t, expected, Format(format, mt), fmt.Sprintf("%s/ pattern '%s', with '%s'", t.Name(), format, date))
+	} else {
+		t.Errorf("date parse error - %s", err)
+
+	}
 }
 
 func BenchmarkFormat(b *testing.B) {

@@ -209,8 +209,11 @@ func Format(format string, date time.Time) string {
 			i = i + j - 1
 			v := date.Hour()
 			if v > 12 {
-				v = v - 11
+				v = v - 12
+			} else if v == 0 {
+				v = 12
 			}
+
 			switch j {
 			case 1: // h
 				out += strconv.Itoa(v)
@@ -394,9 +397,10 @@ func Format(format string, date time.Time) string {
 			}
 			i = i + j - 1
 			v := date.Hour()
-			if v > 12 {
+			if v >= 12 {
 				v = v - 12
 			}
+
 			switch j {
 			case 1: // K
 				out += strconv.Itoa(v)
@@ -419,17 +423,20 @@ func Format(format string, date time.Time) string {
 
 			}
 			i = i + j - 1
-			v := date.Hour() + 1
+			v := date.Hour()
 			switch j {
 			case 1: // k
+				if v == 0 {
+					v = 24
+				}
 				out += strconv.Itoa(v)
 			case 2: // kk
-				if v < 10 {
+				if v == 0 {
+					v = 24
+				} else if v < 10 {
 					out += "0"
-					out += strconv.Itoa(v)
-				} else {
-					out += strconv.Itoa(v)
 				}
+				out += strconv.Itoa(v)
 
 			}
 		case '\'': // ' (text delimiter)  or '' (real quote)
