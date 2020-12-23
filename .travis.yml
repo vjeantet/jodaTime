@@ -1,4 +1,6 @@
 language: go
+go:
+    - "1.14"
 install:
     - go get -v golang.org/x/tools/cmd/cover
     - go get -v github.com/stretchr/testify/assert
