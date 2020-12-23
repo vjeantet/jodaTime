@@ -1,4 +1,4 @@
-[![GoDoc](https://godoc.org/github.com/vjeantet/jodaTime?status.svg)](https://godoc.org/github.com/vjeantet/jodaTime)
+[![Go Reference](https://pkg.go.dev/badge/github.com/vjeantet/jodaTime.svg)](https://pkg.go.dev/github.com/vjeantet/jodaTime)
 [![Build Status](https://travis-ci.org/vjeantet/jodaTime.svg)](https://travis-ci.org/vjeantet/jodaTime)
 [![Coverage Status](https://coveralls.io/repos/github/vjeantet/jodaTime/badge.svg?branch=master)](https://coveralls.io/github/vjeantet/jodaTime?branch=master)
 [![Go Report Card](http://goreportcard.com/badge/vjeantet/jodaTime)](http:/goreportcard.com/report/vjeantet/jodaTime)

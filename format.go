@@ -85,9 +85,9 @@ func Format(format string, date time.Time) string {
 			case 2: // DD
 				if date.YearDay() < 10 {
 					out += "0"
-					out += strconv.Itoa(int(date.YearDay()))
+					out += strconv.Itoa(date.YearDay())
 				} else {
-					out += strconv.Itoa(int(date.YearDay()))
+					out += strconv.Itoa(date.YearDay())
 				}
 
 			}
@@ -108,9 +108,9 @@ func Format(format string, date time.Time) string {
 			case 2: // ww
 				if w < 10 {
 					out += "0"
-					out += strconv.Itoa(int(w))
+					out += strconv.Itoa(w)
 				} else {
-					out += strconv.Itoa(int(w))
+					out += strconv.Itoa(w)
 				}
 			}
 
@@ -448,7 +448,7 @@ func Format(format string, date time.Time) string {
 				continue
 			}
 
-			tmp := []rune{}
+			var tmp []rune
 			j := 1
 			for ; i+j < lenFormat; j++ {
 				if formatRune[i+j] != r {

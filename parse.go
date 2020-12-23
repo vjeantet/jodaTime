@@ -193,7 +193,7 @@ func getLayout(format string) string {
 				continue
 			}
 
-			tmp := []rune{}
+			var tmp []rune
 			j := 1
 			for ; i+j < lenFormat; j++ {
 				if formatRune[i+j] != r {
