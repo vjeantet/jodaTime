@@ -123,6 +123,21 @@ func TestParseInLocationError(t *testing.T) {
 func BenchmarkParse(b *testing.B) {
 	// run the Parse function b.N times
 	for n := 0; n < b.N; n++ {
-		Parse("YYYY-MM-dd'T'HH:mm:ss", "2017-02-18T16:33:21")
+		_, _ = Parse("YYYY-MM-dd'T'HH:mm:ss", "2017-02-18T16:33:21")
+	}
+}
+
+func BenchmarkParseInLocation(b *testing.B) {
+	// run the Parse function b.N times
+	for n := 0; n < b.N; n++ {
+		_, _ = ParseInLocation("YYYY-MM-dd'T'HH:mm:ss", "2017-02-18T16:33:21", "Europe/Moscow")
+	}
+}
+
+func BenchmarkParseInLocationDirect(b *testing.B) {
+	location, _ := time.LoadLocation("Europe/Moscow")
+	// run the Parse function b.N times
+	for n := 0; n < b.N; n++ {
+		_, _ = ParseInLocationDirect("YYYY-MM-dd'T'HH:mm:ss", "2017-02-18T16:33:21", location)
 	}
 }
