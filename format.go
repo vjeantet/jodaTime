@@ -35,7 +35,7 @@ import (
  k       clockhour of day (1~24)      number        24
  m       minute of hour               number        30
  s       second of minute             number        55
- S       fraction of second           number        978
+ S       fraction of second           number        987654321
 
  z       time zone                    text          Pacific Standard Time; PST
  Z       time zone offset/id          zone          -0800; -08:00; America/Los_Angeles
@@ -301,7 +301,7 @@ func Format(format string, date time.Time) string {
 
 			}
 
-		case 'S': // S SS SSS
+		case 'S': // S (from 1 to 9 repeats)
 			j := 1
 			for ; i+j < lenFormat; j++ {
 				if formatRune[i+j] != r {
@@ -310,28 +310,10 @@ func Format(format string, date time.Time) string {
 
 			}
 			i = i + j - 1
-			v := date.Nanosecond() / 1000000
-			switch j {
-			case 1: // S
-				out += strconv.Itoa(v / 100)
-			case 2: // SS
-				v = v / 10
-				if v < 10 {
-					out += "0"
-					out += strconv.Itoa(v)
-				} else {
-					out += strconv.Itoa(v)
-				}
-			case 3: // SSS
-				if v < 10 {
-					out += "00"
-					out += strconv.Itoa(v)
-				} else if v < 100 {
-					out += "0"
-					out += strconv.Itoa(v)
-				} else {
-					out += strconv.Itoa(v)
-				}
+			if j >= 1 && j <= 9 {
+				v := date.Nanosecond() - (date.Nanosecond()/1000000000)*1000000000
+				numStr := strconv.Itoa(v)
+				out += ("000000000"[:9-len(numStr)] + numStr)[:j]
 			}
 
 		case 'z': // z

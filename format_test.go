@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var date, _ = time.Parse("2006-01-02 15:04:05.9999999 MST", "2007-02-03 16:05:06.1234567 UTC")
+var date, _ = time.Parse("2006-01-02 15:04:05.999999999 MST", "2007-02-03 16:05:06.123456789 UTC")
 
 func TestFormatMoreQuotes(t *testing.T) {
 	tests := []struct {
@@ -73,6 +73,21 @@ func TestFormatMore(t *testing.T) {
 		{"SSS", "100", time.Date(2007, time.November, 15, 04, 55, 46, 100000000, time.FixedZone("", -1*3600))},
 		{"SSS", "010", time.Date(2007, time.November, 15, 04, 55, 46, 10000000, time.FixedZone("", -1*3600))},
 		{"SSS", "001", time.Date(2007, time.November, 15, 04, 55, 46, 1000000, time.FixedZone("", -1*3600))},
+
+		{"SSSS", "0010", time.Date(2007, time.November, 15, 04, 55, 46, 1000000, time.FixedZone("", -1*3600))},
+		{"SSSSS", "00100", time.Date(2007, time.November, 15, 04, 55, 46, 1000000, time.FixedZone("", -1*3600))},
+		{"SSSSSS", "001000", time.Date(2007, time.November, 15, 04, 55, 46, 1000000, time.FixedZone("", -1*3600))},
+		{"SSSSSSS", "0010000", time.Date(2007, time.November, 15, 04, 55, 46, 1000000, time.FixedZone("", -1*3600))},
+		{"SSSSSSSS", "00100000", time.Date(2007, time.November, 15, 04, 55, 46, 1000000, time.FixedZone("", -1*3600))},
+		{"SSSSSSSSS", "001000000", time.Date(2007, time.November, 15, 04, 55, 46, 1000000, time.FixedZone("", -1*3600))},
+
+		{"SSS", "123", time.Date(2007, time.November, 15, 04, 55, 46, 123456789, time.FixedZone("", -1*3600))},
+		{"SSSS", "1234", time.Date(2007, time.November, 15, 04, 55, 46, 123456789, time.FixedZone("", -1*3600))},
+		{"SSSSS", "12345", time.Date(2007, time.November, 15, 04, 55, 46, 123456789, time.FixedZone("", -1*3600))},
+		{"SSSSSS", "123456", time.Date(2007, time.November, 15, 04, 55, 46, 123456789, time.FixedZone("", -1*3600))},
+		{"SSSSSSS", "1234567", time.Date(2007, time.November, 15, 04, 55, 46, 123456789, time.FixedZone("", -1*3600))},
+		{"SSSSSSSS", "12345678", time.Date(2007, time.November, 15, 04, 55, 46, 123456789, time.FixedZone("", -1*3600))},
+		{"SSSSSSSSS", "123456789", time.Date(2007, time.November, 15, 04, 55, 46, 123456789, time.FixedZone("", -1*3600))},
 
 		{"Z", "-1100", time.Date(2007, time.November, 15, 04, 55, 46, 1000000, time.FixedZone("", -11*3600))},
 		{"ZZ", "-11:00", time.Date(2007, time.November, 15, 04, 55, 46, 1000000, time.FixedZone("", -11*3600))},
