@@ -35,7 +35,7 @@ import (
  k       clockhour of day (1~24)      number        24
  m       minute of hour               number        30
  s       second of minute             number        55
- S       fraction of second           number        9787654321
+ S       fraction of second           number        987654321
 
  z       time zone                    text          Pacific Standard Time; PST
  Z       time zone offset/id          zone          -0800; -08:00; America/Los_Angeles
@@ -311,8 +311,7 @@ func Format(format string, date time.Time) string {
 			}
 			i = i + j - 1
 			if j >= 1 && j <= 9 {
-				v := date.Nanosecond() / 1000000000
-				v = date.Nanosecond() - v*1000000000
+				v := date.Nanosecond() - (date.Nanosecond()/1000000000)*1000000000
 				numStr := strconv.Itoa(v)
 				out += ("000000000"[:9-len(numStr)] + numStr)[:j]
 			}
