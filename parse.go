@@ -1,8 +1,8 @@
 package jodaTime
 
 import (
-	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 func ParseInLocation(format, value, timezone string) (time.Time, error) {
@@ -24,7 +24,7 @@ func GetLayout(format string) string {
 	//replace ? or for rune ?
 	formatRune := []rune(format)
 	lenFormat := len(formatRune)
-	layout := ""
+	layout := make([]byte, 0, 9)
 	for i := 0; i < lenFormat; i++ {
 		switch r := formatRune[i]; r {
 		case 'h':
@@ -36,9 +36,9 @@ func GetLayout(format string) string {
 			}
 			switch j {
 			case 1: // d
-				layout += "3"
+				layout = append(layout, '3')
 			default:
-				layout += "03"
+				layout = append(layout, "03"...)
 			}
 
 			i = i + j - 1
@@ -50,7 +50,7 @@ func GetLayout(format string) string {
 				}
 			}
 
-			layout += "15"
+			layout = append(layout, "15"...)
 
 			i = i + j - 1
 		case 'm':
@@ -62,9 +62,9 @@ func GetLayout(format string) string {
 			}
 			switch j {
 			case 1: // d
-				layout += "4"
+				layout = append(layout, '4')
 			default:
-				layout += "04"
+				layout = append(layout, "04"...)
 			}
 
 			i = i + j - 1
@@ -77,9 +77,9 @@ func GetLayout(format string) string {
 			}
 			switch j {
 			case 1: // d
-				layout += "5"
+				layout = append(layout, '5')
 			default:
-				layout += "05"
+				layout = append(layout, "05"...)
 			}
 
 			i = i + j - 1
@@ -92,9 +92,9 @@ func GetLayout(format string) string {
 			}
 			switch j {
 			case 1: // d
-				layout += "2"
+				layout = append(layout, '2')
 			default:
-				layout += "02"
+				layout = append(layout, "02"...)
 			}
 			i = i + j - 1
 		case 'E':
@@ -106,9 +106,9 @@ func GetLayout(format string) string {
 			}
 			switch j {
 			case 1, 2, 3: // d
-				layout += "Mon"
+				layout = append(layout, "Mon"...)
 			default:
-				layout += "Monday"
+				layout = append(layout, "Monday"...)
 			}
 			i = i + j - 1
 		case 'M':
@@ -121,14 +121,13 @@ func GetLayout(format string) string {
 
 			switch j {
 			case 1: // d
-				layout += "1"
+				layout = append(layout, '1')
 			case 2:
-				layout += "01"
+				layout = append(layout, "01"...)
 			case 3:
-				layout += "Jan"
+				layout = append(layout, "Jan"...)
 			case 4:
-				layout += "January"
-
+				layout = append(layout, "January"...)
 			}
 			i = i + j - 1
 
@@ -141,9 +140,9 @@ func GetLayout(format string) string {
 			}
 			switch j {
 			case 2: // d
-				layout += "06"
+				layout = append(layout, "06"...)
 			default: // dd
-				layout += "2006"
+				layout = append(layout, "2006"...)
 			}
 
 			i = i + j - 1
@@ -156,7 +155,9 @@ func GetLayout(format string) string {
 				}
 			}
 
-			layout += strings.Repeat("9", j)
+			for i := 0; i < j; i++ {
+				layout = append(layout, '9')
+			}
 
 			i = i + j - 1
 
@@ -168,7 +169,7 @@ func GetLayout(format string) string {
 				}
 			}
 
-			layout += "PM"
+			layout = append(layout, "PM"...)
 		case 'Z':
 			j := 1
 			for ; i+j < lenFormat; j++ {
@@ -179,9 +180,9 @@ func GetLayout(format string) string {
 
 			switch j {
 			case 1: // d
-				layout += "-0700"
+				layout = append(layout, "-0700"...)
 			case 2: // d
-				layout += "-07:00"
+				layout = append(layout, "-07:00"...)
 			}
 
 			i = i + j - 1
@@ -189,27 +190,25 @@ func GetLayout(format string) string {
 
 			// real quote
 			if formatRune[i+1] == r {
-				layout += "'"
+				layout = append(layout, '\'')
 				i = i + 1
 				continue
 			}
 
-			var tmp []rune
 			j := 1
 			for ; i+j < lenFormat; j++ {
 				if formatRune[i+j] != r {
-					tmp = append(tmp, formatRune[i+j])
+					layout = utf8.AppendRune(layout, formatRune[i+j])
 					continue
 				}
 				break
 			}
 			i = i + j
 
-			layout += string(tmp)
 		default:
-			layout += string(r)
+			layout = utf8.AppendRune(layout, r)
 		}
 	}
-	return layout
+	return UnsafeString(layout)
 
 }
