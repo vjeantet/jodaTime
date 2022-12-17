@@ -320,9 +320,39 @@ func check(t *testing.T, format, expected, date string) {
 	}
 }
 
+var (
+	layoutShort = "d/M/YY h:m:s z"
+	layoutLong  = "dd/MM/YYYY HH:mm:ss z"
+)
+
 func BenchmarkFormat(b *testing.B) {
 	// run the Parse function b.N times
 	for n := 0; n < b.N; n++ {
-		Format("dd/MM/YYYY HH:mm:ss z", date)
+		Format(layoutLong, date)
+	}
+}
+
+func BenchmarkTimeFormat(b *testing.B) {
+	layout := GetLayout(layoutLong)
+	// run the Parse function b.N times
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		date.Format(layout)
+	}
+}
+
+func BenchmarkFormatShort(b *testing.B) {
+	// run the Parse function b.N times
+	for n := 0; n < b.N; n++ {
+		Format(layoutShort, date)
+	}
+}
+
+func BenchmarkTimeFormatShort(b *testing.B) {
+	layout := GetLayout(layoutShort)
+	// run the Parse function b.N times
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		date.Format(layout)
 	}
 }

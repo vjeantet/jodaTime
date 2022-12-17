@@ -10,16 +10,17 @@ func ParseInLocation(format, value, timezone string) (time.Time, error) {
 	if err != nil {
 		return time.Time{}, err
 	}
-	return time.ParseInLocation(getLayout(format), value, location)
+	return time.ParseInLocation(GetLayout(format), value, location)
 
 }
 
 // Parse parses a value into a time.time
 func Parse(format, value string) (time.Time, error) {
-	return time.Parse(getLayout(format), value)
+	return time.Parse(GetLayout(format), value)
 }
 
-func getLayout(format string) string {
+// GetLayout convert JodaTime layout to golang stdlib time layout
+func GetLayout(format string) string {
 	//replace ? or for rune ?
 	formatRune := []rune(format)
 	lenFormat := len(formatRune)

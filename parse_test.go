@@ -107,3 +107,18 @@ func BenchmarkParse(b *testing.B) {
 		Parse("YYYY-MM-dd'T'HH:mm:ss", "2017-02-18T16:33:21")
 	}
 }
+
+func BenchmarkTimeParse(b *testing.B) {
+	layout := GetLayout("YYYY-MM-dd'T'HH:mm:ss")
+	// run the Parse function b.N times
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		time.Parse(layout, "2017-02-18T16:33:21")
+	}
+}
+
+func BenchmarkGetLayout(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		_ = GetLayout(layoutLong)
+	}
+}
