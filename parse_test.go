@@ -84,6 +84,25 @@ func TestParseInLocation(t *testing.T) {
 	}
 }
 
+func TestParseInLocationDirect(t *testing.T) {
+	location, _ := time.LoadLocation("Europe/Paris")
+	tests := []struct {
+		format   string
+		value    string
+		location *time.Location
+		expected time.Time
+	}{
+		{"dd/MM/YYYY HH:mm:ss", "03/02/2007 23:10:05", location,
+			time.Date(2007, time.February, 3, 23, 10, 5, 0, time.FixedZone("CET", 3600))},
+	}
+
+	for _, test := range tests {
+		rTime, err := ParseInLocationDirect(test.format, test.value, test.location)
+		assert.NoError(t, err)
+		assert.Equal(t, test.expected.Format("RFC1123Z"), rTime.Format("RFC1123Z"), "("+test.format+") they should be equal")
+	}
+}
+
 func TestParseInLocationError(t *testing.T) {
 	tests := []struct {
 		format   string
@@ -104,7 +123,22 @@ func TestParseInLocationError(t *testing.T) {
 func BenchmarkParse(b *testing.B) {
 	// run the Parse function b.N times
 	for n := 0; n < b.N; n++ {
-		Parse("YYYY-MM-dd'T'HH:mm:ss", "2017-02-18T16:33:21")
+		_, _ = Parse("YYYY-MM-dd'T'HH:mm:ss", "2017-02-18T16:33:21")
+	}
+}
+
+func BenchmarkParseInLocation(b *testing.B) {
+	// run the Parse function b.N times
+	for n := 0; n < b.N; n++ {
+		_, _ = ParseInLocation("YYYY-MM-dd'T'HH:mm:ss", "2017-02-18T16:33:21", "Europe/Moscow")
+	}
+}
+
+func BenchmarkParseInLocationDirect(b *testing.B) {
+	location, _ := time.LoadLocation("Europe/Moscow")
+	// run the Parse function b.N times
+	for n := 0; n < b.N; n++ {
+		_, _ = ParseInLocationDirect("YYYY-MM-dd'T'HH:mm:ss", "2017-02-18T16:33:21", location)
 	}
 }
 
